@@ -1,0 +1,238 @@
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import { useCallback, useRef, useState } from "react";
+import { IconType } from "react-icons";
+import {
+  FaEnvelope,
+  FaFacebookF,
+  FaLinkedinIn,
+  FaTwitter,
+  FaYoutube,
+} from "react-icons/fa";
+import type { Swiper as SwiperCore } from "swiper";
+import "swiper/css";
+import "swiper/css/effect-fade";
+import "swiper/css/navigation";
+import { EffectFade, Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Member } from "./index";
+
+interface SocialLinkProps {
+  href: string;
+  icon: IconType;
+  alt: string;
+}
+
+interface TeamSliderProps {
+  members: Member[];
+}
+
+const SocialLink = ({ href, icon: Icon, alt }: SocialLinkProps) => (
+  <li className="float-left pr-[5px]">
+    <Link href={href}>
+      <Icon
+        className="text-[25px] text-[#CFB53B] hover:filter hover:contrast-0 border-[1px] rounded-full p-1 border-[#CFB53B] transition-colors"
+        aria-label={alt}
+      />
+    </Link>
+  </li>
+);
+
+const TeamSliderSwiper = ({ members }: TeamSliderProps) => {
+  const swiperRef = useRef<SwiperCore | null>(null);
+  const [isBeginning, setIsBeginning] = useState<boolean>(true);
+  const [isEnd, setIsEnd] = useState<boolean>(false);
+
+  const handleSwiper = useCallback((swiper: SwiperCore) => {
+    swiperRef.current = swiper;
+    setIsBeginning(swiper.isBeginning);
+    setIsEnd(swiper.isEnd);
+  }, []);
+
+  const handleSlideChange = useCallback((swiper: SwiperCore) => {
+    setIsBeginning(swiper.isBeginning);
+    setIsEnd(swiper.isEnd);
+  }, []);
+
+  return (
+    <div className="team-slider-wrapper">
+      <style>{`
+        .team-swiper .swiper-slide .item-container {
+          display: flex !important;
+          flex-direction: column;
+          width: 100% !important;
+          height: 100% !important;
+          box-sizing: border-box;
+        }
+
+        .team-swiper .swiper-slide {
+          display: flex;
+          height: auto;
+        }
+
+        @media (min-width: 992px) {
+          .team-swiper .swiper-slide {
+            width: calc((100% - 16px) / 2);
+            margin-right: 16px; 
+          }
+        }
+        @media (min-width: 1140px) {
+          .team-swiper .swiper-slide {
+            width: calc((100% - 40px) / 3);
+            margin-right: 20px;
+          }
+        }
+        @media (min-width: 1366px) {
+          .team-swiper .swiper-slide {
+            width: calc((100% - 36px) / 4);
+            margin-right: 12px;
+          }
+        }
+      `}</style>
+
+      <button
+        onClick={() => swiperRef.current?.slidePrev()}
+        disabled={isBeginning}
+        aria-label="Previous team member"
+        type="button"
+        className="team-arrow team-arrow-prev focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+      >
+        <div>❮</div>
+      </button>
+
+      <button
+        onClick={() => swiperRef.current?.slideNext()}
+        disabled={isEnd}
+        aria-label="Next team member"
+        type="button"
+        className="team-arrow team-arrow-next focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+      >
+        <div>❯</div>
+      </button>
+
+      <Swiper
+        modules={[Navigation, EffectFade]}
+        spaceBetween={12}
+        speed={800}
+        loop={false}
+        slidesPerView={4}
+        slidesPerGroup={1}
+        onSwiper={handleSwiper}
+        onSlideChange={handleSlideChange}
+        watchSlidesProgress={true}
+        a11y={{
+          enabled: true,
+          prevSlideMessage: "Previous team member",
+          nextSlideMessage: "Next team member",
+        }}
+        breakpoints={{
+          0: {
+            slidesPerView: 1,
+            slidesPerGroup: 1,
+            effect: "fade",
+            fadeEffect: {
+              crossFade: true,
+            },
+            spaceBetween: 0,
+          },
+          768: {
+            slidesPerView: 1,
+            slidesPerGroup: 1,
+            effect: "fade",
+            fadeEffect: {
+              crossFade: true,
+            },
+            spaceBetween: 0,
+          },
+          992: {
+            slidesPerView: 2,
+            slidesPerGroup: 1,
+            effect: "slide",
+            spaceBetween: 16,
+          },
+          1140: {
+            slidesPerView: 3,
+            slidesPerGroup: 1,
+            effect: "slide",
+            spaceBetween: 20,
+          },
+          1366: {
+            slidesPerView: 4,
+            slidesPerGroup: 1,
+            effect: "slide",
+            spaceBetween: 12,
+          },
+        }}
+        className="team-swiper"
+      >
+        {members.map((member) => (
+          <SwiperSlide key={member.email}>
+            <article className="item-container">
+              <div className="item ml-0 w-full float-left">
+                <Image
+                  className="w-full mx-auto my-0 object-center"
+                  width={500}
+                  height={300}
+                  loading="lazy"
+                  quality={75}
+                  src={member.image}
+                  alt={`${member.name}, ${member.position}`}
+                />
+              </div>
+              <div className="member-info p-4 414px:p-0 414px:pl-[20px] 414px:pr-[20px] w-full text-left  1366px:pl-[20px] 1366px:pr-[20px] 414px:py-[25px] clear-both overflow-hidden">
+                <h3 className="text-[20px] font-semibold text-[#333333] pb-3 text-left font-montserrat">
+                  {member.name}
+                </h3>
+
+                <p className="text-[14px] text-[#808080] font-normal leading-normal text-left mb-[18px] font-prata">
+                  {member.position}
+                </p>
+
+                <div className="email-info flex items-center px-0 py-[10px]">
+                  <FaEnvelope className="pr-2 text-[24px] relative inline text-[#CFB53B]" />
+                  <Link
+                    className="text-[14px] text-[#929292] hover:no-underline hover:text-[#c7a652]"
+                    href={`mailto:${member.email}`}
+                    aria-label={`Send email to ${member.name}`}
+                  >
+                    {member.email}
+                  </Link>
+                </div>
+                <nav
+                  className="social-media pt-[5px]"
+                  aria-label={`${member.name}'s social media links`}
+                >
+                  <ul className="list-none flex gap-2">
+                    <SocialLink
+                      href={member.socialLinks.facebook}
+                      icon={FaFacebookF}
+                      alt="Facebook"
+                    />
+                    <SocialLink
+                      href={member.socialLinks.twitter}
+                      icon={FaTwitter}
+                      alt="Twitter"
+                    />
+                    <SocialLink
+                      href={member.socialLinks.youtube}
+                      icon={FaYoutube}
+                      alt="YouTube"
+                    />
+                    <SocialLink
+                      href={member.socialLinks.linkedin}
+                      icon={FaLinkedinIn}
+                      alt="LinkedIn"
+                    />
+                  </ul>
+                </nav>
+              </div>
+            </article>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </div>
+  );
+};
+
+export default TeamSliderSwiper;

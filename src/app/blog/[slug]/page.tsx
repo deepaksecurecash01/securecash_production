@@ -1,0 +1,190 @@
+import { notFound } from "next/navigation";
+import { blogPosts } from "../../../data/blogData";
+import BlogHeroSection from "@/app/blog/components/BlogHeroSection";
+import Link from "next/link";
+import Image from "next/image";
+import { FaTwitter, FaFacebookF, FaLinkedinIn } from "react-icons/fa";
+import Container from "@/components/layout/Container";
+import BlogLatestPost from "@/app/blog/components/BlogLatestPost";
+import BottomBanner from "@/components/common/BottomBanner";
+import { parseHtml } from "@/utils/htmlParser";
+import './blog-single.css';
+import { Metadata } from "next";
+
+interface BlogPostPageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export async function generateStaticParams()
+{
+  return blogPosts.map((post) => ({
+    slug: post.id.toString(),
+  }));
+}
+
+export async function generateMetadata({ params } : BlogPostPageProps) : Promise<Metadata>
+{
+  const { slug } = await params;
+  const blogPost = blogPosts.find((post) => post.id.toString() === slug);
+
+  if (!blogPost) {
+    return { title: "Blog Post Not Found | SecureCash", description: "The requested blog post could not be found." };
+  }
+
+  const absoluteUrl = `https://www.securecash.com.au/blog/${slug}`;
+  const featuredImage = blogPost.featuredImage;
+  const imageUrl = featuredImage.startsWith('http') ? featuredImage : `https://www.securecash.com.au${featuredImage}`;
+
+  // BreadcrumbList Schema Generation
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.securecash.com.au"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": "https://www.securecash.com.au/blog"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": blogPost.metaTitle,
+        "item": absoluteUrl
+      }
+    ]
+  };
+
+  return {
+    title: blogPost.metaTitle,
+    description: blogPost.metaDescription,
+    alternates: {
+      canonical: absoluteUrl,
+    },
+    openGraph: {
+      title: blogPost.metaTitle,
+      description: blogPost.metaDescription,
+      url: absoluteUrl,
+      images: [
+        {
+          url: imageUrl,
+          width: 900,
+          height: 420,
+          alt: blogPost.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: blogPost.metaTitle,
+      description: blogPost.metaDescription,
+      images: [imageUrl],
+    },
+    // Inject Breadcrumb Schema
+    other: {
+      "application/ld+json": JSON.stringify([
+        breadcrumbSchema,
+      ]),
+    },
+  };
+}
+
+export default async function BlogPost({ params } : BlogPostPageProps)
+{
+  const { slug } = await params;
+  const blog = blogPosts.find((post) => post.id.toString() === slug);
+
+  if (!blog) notFound();
+
+  // Generate the absolute URL for this blog post
+  const absoluteUrl = `https://www.securecash.com.au/blog/${slug}`;
+
+  // Generate social sharing URLs dynamically
+  const twitterShareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(absoluteUrl)}&text=${encodeURIComponent(blog.title)}`;
+  const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(absoluteUrl)}`;
+  const linkedinShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(absoluteUrl)}`;
+
+  return (
+    <>
+      <BlogHeroSection title={blog.title} date={blog.date} />
+
+      <section className="blog-single-main">
+        <Container className="inner w-full">
+          <div className="blog-single-main--wrap">
+            <div className="blog-single-main--social mb-[60px] 480px:mb-0 top-[10px] w-full 1024px:w-[18%] 1024px:top-[58px] absolute z-[10]">
+              <ul className="blog-single-main--social__list list-none flex-row w-[200px] 1024px:w-auto justify-around 1024px:justify-normal mx-auto 1024px:mx-0 flex items-center 1024px:flex-col">
+                <li className="mb-[26px]">
+                  <a
+                    target="_blank"
+                    href={twitterShareUrl}
+                    rel="noopener noreferrer"
+                    className="group bg-[#f2f2f2] rounded-full h-[36px] w-[36px] flex justify-center items-center transition-all duration-150 ease-in hover:bg-black hover:text-white hover:no-underline"
+                    aria-label="Share on Twitter"
+                  >
+                    <FaTwitter
+                      size={20}
+                      className="text-primary group-hover:text-white"
+                    />
+                  </a>
+                </li>
+                <li className="mb-[26px]">
+                  <a
+                    target="_blank"
+                    href={facebookShareUrl}
+                    rel="noopener noreferrer"
+                    className="group bg-[#f2f2f2] rounded-full h-[36px] w-[36px] flex justify-center items-center transition-all duration-150 ease-in hover:bg-black hover:text-white hover:no-underline"
+                    aria-label="Share on Facebook"
+                  >
+                    <FaFacebookF
+                      size={20}
+                      className="text-primary group-hover:text-white"
+                    />
+                  </a>
+                </li>
+                <li className="mb-[26px]">
+                  <a
+                    target="_blank"
+                    href={linkedinShareUrl}
+                    rel="noopener noreferrer"
+                    className="group bg-[#f2f2f2] rounded-full h-[36px] w-[36px] flex justify-center items-center transition-all duration-150 ease-in hover:bg-black hover:text-white hover:no-underline"
+                    aria-label="Share on LinkedIn"
+                  >
+                    <FaLinkedinIn
+                      size={20}
+                      className="text-primary group-hover:text-white"
+                    />
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div className="blog-single-main--content">
+              <Image
+                src={blog.featuredImage}
+                className="blog-single-main--content__feature-img"
+                alt={blog.images?.[0]?.alt || blog.title}
+                width={blog.images?.[0]?.width || 900}
+                height={blog.images?.[0]?.height || 420}
+                priority
+              />
+              <article className="blog-content-wrap">
+                {parseHtml(blog.content)}
+                <p>
+                  <br />
+                  <Link href="/blog/">&lt;&lt; Blog Home</Link>
+                </p>
+              </article>
+            </div>
+          </div>
+          <BlogLatestPost currentSlug={slug} />
+        </Container>
+      </section>
+      <BottomBanner />
+    </>
+  );
+}

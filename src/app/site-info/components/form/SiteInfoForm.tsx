@@ -1,0 +1,219 @@
+"use client";
+import FormBackButton from "@/components/form/utils/core/FormBackButton";
+import FormSubmitButton from "@/components/form/utils/core/FormSubmitButton";
+import { useFormManager } from "@/hooks/useFormManager";
+import {
+  SiteInfoFormData,
+  UNIFIED_DEFAULT_VALUES,
+  UNIFIED_SITE_INFO_SCHEMA,
+} from "@/zod/SiteInfoFormSchema";
+import Image from "next/image";
+import Link from "next/link";
+import SiteBusinessStep from "./SiteInfo/steps/SiteBusinessStep";
+import SiteContactStep from "./SiteInfo/steps/SiteContactStep";
+import SiteServiceStep from "./SiteInfo/steps/SiteServiceStep";
+import SiteRiskFormFields from "./SiteRiskFormFields";
+import ThankYouModal from "./ThankYouModal";
+import ReviewStepContent from "@/components/form/utils/core/ReviewStepContent";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export type SiteFormManager = ReturnType<
+  typeof useFormManager<SiteInfoFormData>
+>;
+
+// ─── Step registry ────────────────────────────────────────────────────────────
+
+const STEP_COMPONENTS = {
+  business: SiteBusinessStep,
+  contact: SiteContactStep,
+  service: SiteServiceStep,
+} as const;
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+
+
+const ContentSection = () => (
+  <div className="right-contact-row w-[96%] 992px:w-1/2 mx-auto 992px:mx-0 pt-[35px] 992px:pt-0 [flex:1] 992px:pl-8">
+    <h1 className="text-[22px] 480px:mt-10 font-semibold leading-[1.6em] mx-auto 992px:text-[26px] 768px:text-left 768px:mx-0 font-montserrat">
+      Thanks for that! This is the final step in order to getting your service
+      setup.
+    </h1>
+    <hr className="h-[4px] rounded-[5px] border-0 bg-primary w-[100px] my-5 text-left mx-0" />
+    <p className="text-[16px] leading-[2rem] text-left mb-4 768px:text-left font-light font-montserrat">
+      Please provide us with the necessary contact information and the service
+      schedule that you would like us to implement. Please note that this form
+      needs to be submitted once per location that you wish us to collect cash
+      from or deliver cash to.
+    </p>
+    <p className="text-[16px] leading-[2rem] text-left mb-4 768px:text-left font-light font-montserrat">
+      If you are not after a regular collection but a once off collection fill
+      out the form located{" "}
+      <span className="underline">
+        <strong className="uppercase">
+          <a href="/special-event/">special event form</a>
+        </strong>
+      </span>{" "}
+      instead.
+    </p>
+    <p className="text-[16px] leading-[2rem] text-left mb-4 768px:text-left font-light flex flex-col gap-4 font-montserrat">
+      <span>
+        To learn more about how we manage information provided you can view our{" "}
+        <Link className="text-primary hover:underline" href="/privacy-policy/">
+          Privacy Policy
+        </Link>
+        .
+      </span>
+      <strong>
+        <Link className="text-primary hover:underline" href="/austrac/">
+          &lt;&lt; Previous
+        </Link>
+      </strong>
+    </p>
+  </div>
+);
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
+const SiteInfoForm = () => {
+  const formManager = useFormManager({
+    schema: UNIFIED_SITE_INFO_SCHEMA,
+    defaultValues: UNIFIED_DEFAULT_VALUES,
+    formType: "siteinfo",
+    formId: "SiteInfo",
+    multiStep: {
+      steps: ["business", "contact", "service", "risk"],
+      conditional: false,
+    },
+    hybrid: {
+      enabled: true,
+      reviewStep: 3,
+      submitEnabled: false,
+    },
+    prepareData: async (data: SiteInfoFormData) => ({
+      ...data,
+      formType: "siteinfo",
+    }),
+  });
+
+  const { stepId, currentStep, isFirst } = formManager.getCurrentStep();
+  const { submitButtonEnabled } = formManager;
+
+  const renderCurrentStep = () => {
+    if (stepId === "risk") {
+      return <ReviewStepContent onEdit={(_e) => formManager.goToStep(2)} />;
+    }
+
+    const StepComponent =
+      STEP_COMPONENTS[stepId as keyof typeof STEP_COMPONENTS];
+    if (!StepComponent) return null;
+
+    return <StepComponent formManager={formManager} theme="dark" />;
+  };
+
+  const getSubmitLabel = () => (currentStep === 2 ? "Continue" : "Next");
+
+  return (
+    <>
+      {/* ── Multi-step panel ─────────────────────────────────────────────── */}
+      <div
+        id="content-contact"
+        className="480px:bg-content-bg bg-center bg-no-repeat bg-cover inline-block w-full 992px:my-[40px] 1280px:my-[120px]"
+      >
+        <div className="inner-big w-[95%] max-w-[1366px] mx-auto my-0 992px:flex items-center">
+          <ContentSection />
+
+          <div className="[flex:1]">
+            <div className="float-none w-full mx-auto relative left-0 flex-1 flex justify-center h-[844px]">
+              <form
+                className="forms-site-info h-auto px-[30px] 1366px:h-full submit-status mt-4 992px:mt-0 992px:mb-16 w-full lg:mt-0 lg:mb-0 992px:w-[450px] 1100px:w-[480px] 1200px:w-[500px] 1280px:w-[600px] shadow-[3px_3px_5px_0px_rgba(0,0,0,0.75)] text-center py-8 rounded-[6px] bg-[#1a1a1a] relative"
+                data-formid="SiteInfoMultiStep"
+                onSubmit={formManager.handleSubmit}
+                noValidate
+              >
+                {!isFirst && stepId !== "risk" && (
+                  <div className="form-slide-btn-wrap mb-4 absolute">
+                    <FormBackButton onClick={formManager.goBack} />
+                  </div>
+                )}
+
+                <div className={stepId === "risk" ? "h-full" : ""}>
+                  {renderCurrentStep()}
+                </div>
+
+                {stepId !== "risk" && (
+                  <div className="button-controls-container w-[80%] mx-auto mt-7">
+                    <div className="button-section relative">
+                      <FormSubmitButton
+                        isSubmitting={formManager.isSubmitting}
+                        isSubmitted={formManager.isSubmitted}
+                        idleLabel={getSubmitLabel()}
+                        submittingLabel="Processing..."
+                      />
+                    </div>
+                  </div>
+                )}
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Risk / submit panel ───────────────────────────────────────────── */}
+      <div
+        id="contact-form-section"
+        className="inline-block w-full mb-12 480px:mb-[120px]"
+      >
+        <div className="inner-big w-[95%] max-w-[1366px] mx-auto my-0 992px:flex">
+          <div className="414px:mx-4 hidden 992px:block 992px:w-[50%] 992px:mx-0 py-8 px-10 480px:px-[5%] 992px:pl-8 1280px:pl-24 992px:pt-32 shadow-[3px_3px_10px_0px_rgba(0,0,0,0.2)] rounded-t-[8px] 992px:rounded-l-[8px] 992px:rounded-tr-none relative">
+            <Image
+              src="/images/welcome/terms-main-img-2.jpg"
+              alt="Making A Deal"
+              fill
+              style={{ objectFit: "cover" }}
+            />
+          </div>
+
+          <div
+            className={`float-none 992px:w-[80%] 992px:float-left relative left-0 flex justify-center transition-opacity duration-300 ${
+              !submitButtonEnabled
+                ? "opacity-50 pointer-events-none"
+                : "opacity-100"
+            }`}
+          >
+            <form
+              className="forms-franchise-v2 rounded-r-[8px] shadow-[3px_3px_10px_0px_rgba(0,0,0,0.2)] h-auto 992px:mx-0 px-4 600px:px-8 480px:px-[5%] 1366px:h-full submit-status w-full lg:mt-0 lg:mb-0 text-center py-8 bg-[#f1f1f1] relative 1366px:pt-[74px] 1366px:pb-[84px]"
+              data-formid="SiteInfo"
+              style={{ background: "#f1f1f1" }}
+              onSubmit={formManager.handleSubmit}
+              noValidate
+            >
+              <div className="form-tab 480px:w-[90%] mx-auto">
+                <h1 className="text-[22px] font-semibold leading-[1.6em] mx-auto 992px:text-[26px] 768px:text-left 768px:mx-0 font-montserrat">
+                  Site Risk Information
+                </h1>
+                <hr className="w-[100px] my-5 768px:text-left 768px:mx-0 h-[4px] rounded-[5px] border-0 bg-primary" />
+                <p className="text-[16px] leading-[2rem] text-left 768px:mb-3 992px:mb-4 480px:mb-0 768px:text-left font-light font-montserrat">
+                  Please provide us with the information below so our Area
+                  Managers and Banking Couriers can better identify any
+                  potential hazards or dangers at this location.
+                </p>
+
+                <SiteRiskFormFields formManager={formManager} />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <ThankYouModal
+        showThankYou={formManager.isSubmitted}
+        onClose={formManager.resetForm}
+        type="Thankyou"
+      />
+    </>
+  );
+};
+
+export default SiteInfoForm;

@@ -1,0 +1,36 @@
+import Image from "next/image";
+import { ContentItem } from "./SectionWrapper";
+import { parseHtml } from "@/utils/htmlParser";
+
+const ContentScroll = ({ scrollData } : { scrollData: ContentItem[] }) =>
+{
+    return (
+      <ul className="list-none w-full">
+        {scrollData.map((item, index) => (
+          <li key={index}>
+            <div
+              className={`flex items-center mt-[30px] ${index === 0 ? "1024px:mt-[24px]" : "1024px:mt-[50px]"} mb-[12px] gap-3`}
+            >
+              <Image
+                className="inline-block bg-contain bg-no-repeat 992px:w-[40px]"
+                src="/images/icons/tick.png"
+                alt="Check mark"
+                width={50}
+                height={50}
+                loading={index === 0 ? "eager" : "lazy"}
+              />
+              <h2 className="text-[18px] leading-[1.5rem] font-bold text-[#000] text-left mb-0 w-full font-montserrat">
+                {item.title}:
+              </h2>
+            </div>
+            <h3 className="text-[18px] font-medium text-[#000] text-left mb-0 font-montserrat">
+              {item.subtitle}
+            </h3>
+            <div>{parseHtml(item.content)}</div>
+          </li>
+        ))}
+      </ul>
+    );
+};
+
+export default ContentScroll;

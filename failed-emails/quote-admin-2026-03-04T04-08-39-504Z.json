@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-03-04T04:08:39.504Z",
+  "formType": "quote-admin",
+  "error": "Unauthorized",
+  "emailData": {
+    "to": "deepak@securecash.com.au",
+    "subject": "SecureCash - Quotation Request (Securecash)",
+    "from": "SecureCash Sales <sales@securecash.com.au>",
+    "hasAttachments": false,
+    "attachmentCount": 0
+  },
+  "retryable": true
+}
