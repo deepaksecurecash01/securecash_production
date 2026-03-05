@@ -1,17 +1,17 @@
-import austracSubmissionEmailTemplate from "../templates2/austracSubmissionEmailTemplate";
-import contactAdminNotificationEmailTemplate from "../templates2/contactAdminNotificationEmailTemplate";
-import contactUserConfirmationEmailTemplate from "../templates2/contactUserConfirmationEmailTemplate";
-import franchiseAdminInquiryEmailTemplate from "../templates2/franchiseAdminInquiryEmailTemplate";
-import franchiseUserWelcomeEmailTemplate from "../templates2/franchiseUserWelcomeEmailTemplate";
-import icaContractorWelcomeEmailTemplate from "../templates2/icaContractorWelcomeEmailTemplate";
-import icaEdocketsIntroductionEmailTemplate from "../templates2/icaEdocketsIntroductionEmailTemplate";
-import icaOperationsReviewEmailTemplate from "../templates2/icaOperationsReviewEmailTemplate";
-import inductionEmailTemplate from "../templates2/inductionEmailTemplate";
-import quoteAdminRequestEmailTemplate from "../templates2/quoteAdminRequestEmailTemplate";
-import quoteUserConfirmationEmailTemplate from "../templates2/quoteUserConfirmationEmailTemplate";
-import siteInfoAdminNotificationEmailTemplate from "../templates2/siteInfoAdminNotificationEmailTemplate";
-import siteInfoUserConfirmationEmailTemplate from "../templates2/siteInfoUserConfirmationEmailTemplate";
-import termsAgreementEmailTemplate from "../templates2/termsAgreementEmailTemplate";
+import austracSubmissionEmailTemplate from "../templates/austracSubmissionEmailTemplate";
+import contactAdminNotificationEmailTemplate from "../templates/contactAdminNotificationEmailTemplate";
+import contactUserConfirmationEmailTemplate from "../templates/contactUserConfirmationEmailTemplate";
+import franchiseAdminInquiryEmailTemplate from "../templates/franchiseAdminInquiryEmailTemplate";
+import franchiseUserWelcomeEmailTemplate from "../templates/franchiseUserWelcomeEmailTemplate";
+import icaContractorWelcomeEmailTemplate from "../templates/icaContractorWelcomeEmailTemplate";
+import icaEdocketsIntroductionEmailTemplate from "../templates/icaEdocketsIntroductionEmailTemplate";
+import icaOperationsReviewEmailTemplate from "../templates/icaOperationsReviewEmailTemplate";
+import inductionEmailTemplate from "../templates/inductionEmailTemplate";
+import quoteAdminRequestEmailTemplate from "../templates/quoteAdminRequestEmailTemplate";
+import quoteUserConfirmationEmailTemplate from "../templates/quoteUserConfirmationEmailTemplate";
+import siteInfoAdminNotificationEmailTemplate from "../templates/siteInfoAdminNotificationEmailTemplate";
+import siteInfoUserConfirmationEmailTemplate from "../templates/siteInfoUserConfirmationEmailTemplate";
+import termsAgreementEmailTemplate from "../templates/termsAgreementEmailTemplate";
 import {
   formatArrayField,
   formatCallbackDate,

@@ -26,7 +26,7 @@ interface SiteInfoFormData {
   dateOfSubmission?: string;
 }
 
-type FormatterFn = (field: unknown) => string;
+type FormatterFn = (field: string | string[] | null | undefined) => string;
 
 const siteInfoAdminNotificationEmailTemplate = (
   formData: SiteInfoFormData,
