@@ -599,11 +599,10 @@ export const blogPosts: BlogPost[] = [
     <img class="blog-single-main--content__img-with-caption"
                         src="/images/blog/history-of-banks-img-1.jpg" alt="Ancient Temple"
                         width="900" height="600">
-    <p class="blog-single-main--content__attribution-only">Image by 
-                            href="https://pixabay.com/users/engin_akyurt-3656355/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=2614952">Engin
-                            Akyurt</a> from 
-                            href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=2614952">Pixabay</a>
-                    </p>
+    <p class="blog-single-main--content__attribution-only -mt-6">Image by 
+    <a href="https://pixabay.com/users/engin_akyurt-3656355/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=2614952">Engin Akyurt</a> from 
+    <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=2614952">Pixabay</a>
+</p>
     <p>Excavations from 8000BC have divulged recording tokens that were used to tally produce. And the
                         Code of Hammurabi, a clay tablet from a Babylonian city-state created in the late 1700s BC,
                         listed 282 rules and laws including those related to baking practices.</p>
@@ -761,7 +760,6 @@ export const blogPosts: BlogPost[] = [
       {
         url: "/images/blog/history-of-cash-in-transit-img.jpg",
         alt: "History of Cash in Transit Infographics",
-       
       },
     ],
   },

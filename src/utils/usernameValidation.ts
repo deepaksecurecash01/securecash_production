@@ -35,7 +35,7 @@ export const checkUsernameAvailability = async (
         const controller = new AbortController();
         abortController = controller;
 
-        // ✅ PATCH: Add 5-second timeout for better UX
+        // PATCH: Add 5-second timeout for better UX
         const timeoutId = setTimeout(() => controller.abort(), 5000);
 
         const response = await fetch("/api/check-username", {

@@ -140,7 +140,7 @@ const InductionForm = () => {
 
   const usernameValue = formManager.watch("EdocketUsername");
 
-  // ✅ Cleanup on unmount
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       cancelUsernameCheck();
@@ -197,11 +197,11 @@ const InductionForm = () => {
         return;
       }
 
-      // ✅ PATCH: Handle API errors gracefully (non-blocking)
+      // PATCH: Handle API errors gracefully (non-blocking)
       if (result.error) {
         setUsernameStatus({
           checking: false,
-          available: "warning", // ✅ Special state for API failures
+          available: "warning", // Special state for API failures
           message:
             "Unable to verify username availability. After your submission it'll be validated by our system and you'll get informed about it via email.",
         });
@@ -223,7 +223,7 @@ const InductionForm = () => {
       }
     } catch (error) {
       console.error("Username check error:", error);
-      // ✅ PATCH: Treat unexpected errors as warnings (non-blocking)
+      // PATCH: Treat unexpected errors as warnings (non-blocking)
       setUsernameStatus({
         checking: false,
         available: "warning",
@@ -233,54 +233,47 @@ const InductionForm = () => {
     }
   }, []);
 
-  // ✅ FIXED: Trigger check when username value changes
+  // FIXED: Trigger check when username value changes
   useEffect(() => {
     if (usernameValue !== undefined) {
       handleUsernameChange(usernameValue);
     }
   }, [usernameValue, handleUsernameChange]);
 
-  // ✅ FIXED: Simplified canSubmit logic with debug logging
+  // FIXED: Simplified canSubmit logic with debug logging
   const canSubmit = () => {
     const username = usernameValue || "";
 
     // Block if checking
     if (usernameStatus.checking) {
-      console.log("❌ Submit blocked: checking username");
       return false;
     }
 
     // Block if username is not available (taken)
     if (usernameStatus.available === false) {
-      console.log("❌ Submit blocked: username taken or invalid");
       return false;
     }
 
     // Block if username exists but is less than 4 characters
     if (username.length > 0 && username.length < 4) {
-      console.log("❌ Submit blocked: username too short");
       return false;
     }
 
     // Block if username is 4+ chars but hasn't been validated yet (null)
     if (username.length >= 4 && usernameStatus.available === null) {
-      console.log("❌ Submit blocked: username not validated (null state)");
       return false;
     }
 
-    // ✅ ALLOW if status is "warning" (API failure - non-blocking)
+    // ALLOW if status is "warning" (API failure - non-blocking)
     if (usernameStatus.available === "warning") {
-      console.log("✅ Submit allowed: API failed (warning state)");
     }
 
-    // ✅ ALLOW if status is true (available)
+    // ALLOW if status is true (available)
     if (usernameStatus.available === true) {
-      console.log("✅ Submit allowed: username available");
     }
 
     // Block if form is submitting
     if (formManager.isSubmitting) {
-      console.log("❌ Submit blocked: form is submitting");
       return false;
     }
 
@@ -478,7 +471,7 @@ const InductionForm = () => {
               Preferred eDocket Username:
             </label>
 
-            {/* ✅ Wrapper with extra padding-bottom to reserve space */}
+            {/* Wrapper with extra padding-bottom to reserve space */}
             <div className="relative pb-8">
               <UniversalFormField
                 {...formManager.getFieldProps({
@@ -490,7 +483,7 @@ const InductionForm = () => {
                 theme="ica"
               />
 
-              {/* ✅ FIXED: Always show status when available */}
+              {/* FIXED: Always show status when available */}
               {!formManager?.errors?.EdocketUsername &&
                 usernameValue &&
                 usernameValue.length >= 4 &&

@@ -20,11 +20,43 @@ import {
   queueEmail,
   type EmailTaskRuntime,
 } from "../services/emailQueue";
-import {
-  prepareQuoteAdminRequestEmail,
-  prepareQuoteUserConfirmationEmail,
-} from "../services/emailService";
+import { prepareAttachments, PreparedEmail } from "../services/emailService";
+import quoteAdminRequestEmailTemplate from "../templates/quoteAdminRequestEmailTemplate";
+import quoteUserConfirmationEmailTemplate from "../templates/quoteUserConfirmationEmailTemplate";
 import type { FormConfig, FormData, ReadPdfFileFn } from "./formRegistry.types";
+
+
+export const prepareQuoteAdminRequestEmail = (
+  formData: FormData,
+  readPdfFile?: ReadPdfFileFn,
+): PreparedEmail => {
+  const htmlTemplate = quoteAdminRequestEmailTemplate(formData);
+
+  return {
+    to: "deepak@securecash.com.au",
+    from: "SecureCash Sales <sales@securecash.com.au>",
+    subject: `SecureCash - Quotation Request (${typeof formData.Organisation === "string" ? formData.Organisation : "Unknown Organisation"})`,
+    text: "Please enable HTML emails in your email client to view the contents of this email.",
+    html: htmlTemplate,
+  };
+};
+
+export const prepareQuoteUserConfirmationEmail = (
+  formData: FormData,
+  readPdfFile?: ReadPdfFileFn,
+): PreparedEmail => {
+  const attachments = prepareAttachments(formData);
+  const htmlTemplate = quoteUserConfirmationEmailTemplate();
+
+  return {
+    to: typeof formData.Email === "string" ? formData.Email : undefined,
+    from: "SecureCash Sales <sales@securecash.com.au>",
+    subject: "SecureCash - Quotation Request",
+    text: "Please enable HTML emails in your email client to view the contents of this email.",
+    html: htmlTemplate,
+    attachments: attachments.length > 0 ? attachments : undefined,
+  };
+};
 
 // ─── Quote-specific helpers ───────────────────────────────────────────────────
 

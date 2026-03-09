@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   future: {
-    hoverOnlyWhenSupported: true, // ✅ Disables hover on touch devices
+    hoverOnlyWhenSupported: true, // Disables hover on touch devices
   },
 
   content: [
@@ -95,7 +95,7 @@ const config: Config = {
       animation: {
         fade: "fade 1.5s ease-in-out",
         "slide-down": "slide-down 0.3s ease-out forwards",
-        "progress-bar": "progress-bar 5s linear forwards",
+        "progress-bar": "progress-bar 3s linear forwards",
       },
     },
   },

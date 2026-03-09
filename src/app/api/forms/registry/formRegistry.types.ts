@@ -35,6 +35,15 @@ export interface HandlerResult {
 }
 
 export interface FormData {
+  attachments?: Array<{
+    data?: string; // base64 — used by induction / ICA attachment format
+    content?: string; // base64 — used by quote / siteinfo attachment format
+    filename: string;
+    type: string;
+  }>;
+  Email?: string;
+  Name?: string;
+  State?: string;
   [key: string]: unknown;
 }
 

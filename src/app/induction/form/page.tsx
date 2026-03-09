@@ -1,28 +1,22 @@
 "use client";
-import { useInduction } from "@/context/InductionContext";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import InductionForm from "./InductionForm";
+import InductionGuard from "../components/InductionGuard";
+import InductionHero from "../components/InductionHero";
+import InductionForm from "../components/InductionForm";
 
-export default function FormPage() {
-  const router = useRouter();
-  const { progress } = useInduction();
-
-  useEffect(() => {
-    if (!progress.isCourseComplete) {
-      router.push("/induction/lessons");
-    }
-  }, [progress, router]);
-
-  if (!progress.isCourseComplete) {
-    return null;
-  }
-
+export default function InductionFormPage() {
   return (
-    <section className="1024px:py-[120px] 768px:bg-[#f2f2f2]">
-      <div className="max-w-[1200px] mx-auto">
-        <InductionForm />
-      </div>
-    </section>
+    // requireCourseComplete: true — if user somehow navigates here without
+    // completing all lessons (e.g. direct URL), InductionGuard sends them
+    // back to /induction/lessons. No localStorage manipulation can bypass this
+    // because InductionGuard derives completion from completedLessonIds.length,
+    // not from the isCourseComplete flag.
+    <InductionGuard requireCourseComplete>
+      <InductionHero />
+      <section className="1024px:py-[120px] 768px:bg-[#f2f2f2]">
+        <div className="max-w-[1200px] mx-auto">
+          <InductionForm />
+        </div>
+      </section>
+    </InductionGuard>
   );
 }

@@ -193,25 +193,28 @@ export const useMultiStepLogic = <T extends FieldValues>({
     ],
   );
 
-  const isLastStep = useCallback(
-    (formDataOverride: T | null = null) => {
-      if (!isMultiStep) return true;
+const isLastStep = useCallback(
+  (formDataOverride: T | null = null) => {
+    if (!isMultiStep) return true;
 
-      if (isHybrid) {
-        return currentStep === multiStep!.steps.length - 1;
-      }
-
-      if (multiStep!.conditional && multiStep!.getNextSteps) {
-        const dataToCheck = (formDataOverride || stepData) as FieldValues;
-        const nextSteps = multiStep!.getNextSteps(dataToCheck);
-        return nextSteps.length === 0;
-      }
-
+    if (isHybrid) {
       return currentStep === multiStep!.steps.length - 1;
-    },
-    [isMultiStep, isHybrid, currentStep, multiStep, stepData],
-  );
+    }
 
+    const { stepId } = getCurrentStep();
+    const dataToCheck = formDataOverride || stepData;
+    const services = getServices(dataToCheck as FieldValues);
+
+    if (multiStep!.conditional) {
+      if (stepId === "quote") return services.length === 0;
+      if (stepId === "banking") return !services.includes("Change");
+      if (stepId === "change") return true;
+    }
+
+    return currentStep === multiStep!.steps.length - 1;
+  },
+  [isMultiStep, isHybrid, getCurrentStep, stepData, currentStep, multiStep],
+);
   const getProgress = useMemo(() => {
     if (!isMultiStep) return { current: 1, total: 1, percentage: 100 };
 

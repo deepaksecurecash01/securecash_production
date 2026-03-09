@@ -69,9 +69,19 @@ const Transaction: Model<ITransaction> =
 // ─── CACHE ────────────────────────────────────────────────────────────────────
 // Module-level cache survives across requests within the same Node.js process.
 // TTL: 6 hours fresh, 24 hours stale-while-revalidate.
+//
+// NOTE: This cache is process-local. Under PM2 cluster mode with multiple
+// workers, each worker maintains its own cache independently — meaning up to
+// N MongoDB queries per TTL window instead of one. If you scale to multiple
+// workers, replace this with a Redis shared cache.
 
 const CACHE_TTL = 6 * 60 * 60 * 1000;
 const STALE_WINDOW = 24 * 60 * 60 * 1000;
+
+// FIX #5: 15 second hard cap on the aggregation pipeline.
+// Without this, a slow MongoDB query holds the request open indefinitely
+// and keeps isRefreshing=true permanently in the background refresh path.
+const AGGREGATION_TIMEOUT_MS = 15_000;
 
 let cache: CacheState = {
   data: null,
@@ -99,45 +109,50 @@ const fetchFreshStats = async (): Promise<StatsData> => {
   const [customers, servicesPerformed, cashMovedResult] = await Promise.all([
     Location.countDocuments({ Status: "ACTIVE", Zone: "SCC" }),
     Transaction.countDocuments({ Organisation: "SCC" }),
-    Transaction.aggregate<AggregationResult>([
-      {
-        $match: {
-          Organisation: "SCC",
-          "Items.Type": { $in: ["Bank Service", "Change Order"] },
-        },
-      },
-      {
-        $unwind: {
-          path: "$Items",
-          preserveNullAndEmptyArrays: false,
-        },
-      },
-      {
-        $match: {
-          "Items.Type": { $in: ["Bank Service", "Change Order"] },
-          "Items.Cash": {
-            $exists: true,
-            $nin: [null, "", "0", "0.00", 0],
+    // FIX #5: maxTimeMS kills the aggregation server-side if it exceeds the
+    // timeout, preventing indefinite hangs on slow queries or MongoDB issues.
+    Transaction.aggregate<AggregationResult>(
+      [
+        {
+          $match: {
+            Organisation: "SCC",
+            "Items.Type": { $in: ["Bank Service", "Change Order"] },
           },
         },
-      },
-      {
-        $group: {
-          _id: null,
-          totalCash: {
-            $sum: {
-              $toDouble: {
-                $replaceAll: {
-                  input: { $trim: { input: { $toString: "$Items.Cash" } } },
-                  find: ",",
-                  replacement: "",
+        {
+          $unwind: {
+            path: "$Items",
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+        {
+          $match: {
+            "Items.Type": { $in: ["Bank Service", "Change Order"] },
+            "Items.Cash": {
+              $exists: true,
+              $nin: [null, "", "0", "0.00", 0],
+            },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalCash: {
+              $sum: {
+                $toDouble: {
+                  $replaceAll: {
+                    input: { $trim: { input: { $toString: "$Items.Cash" } } },
+                    find: ",",
+                    replacement: "",
+                  },
                 },
               },
             },
           },
         },
-      },
-    ]).allowDiskUse(true),
+      ],
+      { allowDiskUse: true, maxTimeMS: AGGREGATION_TIMEOUT_MS },
+    ),
   ]);
 
   const cashMoved =
@@ -162,6 +177,10 @@ const fetchFreshStats = async (): Promise<StatsData> => {
   return stats;
 };
 
+// FIX #1: isRefreshing lock was never released if fetchFreshStats threw before
+// writing to cache (e.g. MongoDB connection failure). After that, no background
+// refresh could ever run again for the lifetime of the process.
+// finally{} guarantees the lock is always released regardless of outcome.
 const backgroundRefresh = async (): Promise<void> => {
   if (cache.isRefreshing) return;
   cache.isRefreshing = true;
@@ -170,6 +189,9 @@ const backgroundRefresh = async (): Promise<void> => {
     await fetchFreshStats();
   } catch (error) {
     console.error("[API] Background refresh failed:", error);
+  } finally {
+    // fetchFreshStats sets isRefreshing=false on success via cache assignment.
+    // This finally block covers the failure path where that assignment never ran.
     cache.isRefreshing = false;
   }
 };

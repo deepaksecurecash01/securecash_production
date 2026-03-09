@@ -26,11 +26,56 @@ import {
   queueEmail,
   type EmailTaskRuntime,
 } from "../services/emailQueue";
-import {
-  prepareContactAdminNotificationEmail,
-  prepareContactUserConfirmationEmail,
-} from "../services/emailService";
+import { formatCallbackDate, getCurrentDateTime } from "../utils/Helpers";
+import { PreparedEmail } from "../services/emailService";
 import type { FormConfig, FormData, ReadPdfFileFn } from "./formRegistry.types";
+import contactAdminNotificationEmailTemplate from "../templates/contactAdminNotificationEmailTemplate";
+import contactUserConfirmationEmailTemplate from "../templates/contactUserConfirmationEmailTemplate";
+
+
+export const prepareContactAdminNotificationEmail = (
+  formData: FormData,
+  readPdfFile?: ReadPdfFileFn,
+): PreparedEmail => {
+  const currentDateTime = getCurrentDateTime();
+  const callbackDate =
+    typeof formData.CallbackDate === "string" ||
+    formData.CallbackDate instanceof Date ||
+    formData.CallbackDate === null ||
+    formData.CallbackDate === undefined
+      ? formData.CallbackDate
+      : undefined;
+  const formattedCallbackDate = formatCallbackDate(callbackDate);
+  const htmlContent = contactAdminNotificationEmailTemplate(
+    formData,
+    currentDateTime,
+    formattedCallbackDate,
+  );
+
+  return {
+    to: typeof formData.Email === "string" ? formData.Email : undefined,
+    from: "SecureCash Customer Service <customers@securecash.com.au>",
+    replyTo: typeof formData.Email === "string" ? formData.Email : undefined,
+    subject: "SecureCash - Contact Request",
+    text: "Please enable HTML emails in your email client to view the contents of this email.",
+    html: htmlContent,
+  };
+};
+
+export const prepareContactUserConfirmationEmail = (
+  formData: FormData,
+  readPdfFile?: ReadPdfFileFn,
+): PreparedEmail => {
+  const htmlContent = contactUserConfirmationEmailTemplate();
+
+  return {
+    to: typeof formData.Email === "string" ? formData.Email : undefined,
+    from: "SecureCash Customer Service <customers@securecash.com.au>",
+    subject: "SecureCash - Contact Request",
+    text: "Please enable HTML emails in your email client to view the contents of this email.",
+    html: htmlContent,
+  };
+};
 
 // ─── Email task builder ───────────────────────────────────────────────────────
 // Extracted so queueEmails and executeEmailsSync don't duplicate task definitions.

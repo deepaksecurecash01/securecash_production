@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-03-09T07:21:47.195Z",
+  "formType": "quote-admin",
+  "error": "getaddrinfo ENOTFOUND api.sendgrid.com",
+  "emailData": {
+    "to": "deepak@securecash.com.au",
+    "subject": "SecureCash - Quotation Request (SecureCash)",
+    "from": "SecureCash Sales <sales@securecash.com.au>",
+    "hasAttachments": false,
+    "attachmentCount": 0
+  },
+  "retryable": true
+}

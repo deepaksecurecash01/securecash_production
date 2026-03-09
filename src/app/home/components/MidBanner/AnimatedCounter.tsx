@@ -16,14 +16,15 @@ const AnimatedCounter = ({
   shouldAnimate = true,
 }: AnimatedCounterProps) => {
   const [count, setCount] = useState(isUpdate ? end : 0);
+  const countRef = useRef(isUpdate ? end : 0); // ← always current, no stale closure
   const rafRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
-  const startValueRef = useRef(isUpdate ? end : 0);
 
   useEffect(() => {
     if (!shouldAnimate) return;
 
-    startValueRef.current = count;
+    // Capture current rendered value via ref — safe regardless of when effect fires
+    const startValue = countRef.current;
     startTimeRef.current = null;
 
     const animate = (timestamp: number) => {
@@ -34,9 +35,9 @@ const AnimatedCounter = ({
       );
 
       const eased = 1 - Math.pow(1 - progress, 3);
-      const currentValue = Math.floor(
-        startValueRef.current + (end - startValueRef.current) * eased,
-      );
+      const currentValue = Math.floor(startValue + (end - startValue) * eased);
+
+      countRef.current = currentValue; // ← keep ref in sync
       setCount(currentValue);
 
       if (progress < 1) {
@@ -48,7 +49,7 @@ const AnimatedCounter = ({
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [end, duration, shouldAnimate]);
+  }, [end, duration, shouldAnimate]); // ← dep array now honest — no missing deps
 
   return (
     <>

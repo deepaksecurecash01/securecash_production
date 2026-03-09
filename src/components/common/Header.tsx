@@ -1,11 +1,11 @@
 "use client";
 
+import useHeaderState from "@/hooks/useHideOnScroll";
 import Image from "next/image";
-import { useState, useEffect, useRef, useCallback } from "react";
-import { FaBars, FaFileSignature } from "react-icons/fa";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import useHideOnScroll from "@/hooks/useHideOnScroll";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { FaBars, FaFileSignature } from "react-icons/fa";
 
 type SubLink = {
   text: string;
@@ -291,7 +291,6 @@ const MobileSubmenu = ({
   </ul>
 );
 
-
 type MobileMenuProps = {
   isVisible: boolean;
   activeSubMenu: string | null;
@@ -380,8 +379,6 @@ const Navbar = () => {
   const [mobileNavVisible, setMobileNavVisible] = useState<boolean>(false);
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
 
-  const isVisible = useHideOnScroll(100);
-
   const toggleMobileMenu = useCallback(() => {
     setMobileNavVisible((prev) => !prev);
     setActiveSubMenu(null);
@@ -396,8 +393,8 @@ const Navbar = () => {
     setActiveSubMenu(null);
   }, []);
 
-  const shouldShow = isVisible || mobileNavVisible;
-
+  const headerState = useHeaderState(100);
+  const shouldShow = headerState !== "unpinned" || mobileNavVisible;
   return (
     <div className="relative z-50">
       <div
@@ -408,10 +405,10 @@ const Navbar = () => {
       <header
         className={`
           fixed top-0 left-0 right-0 z-50
-          bg-white w-full shadow-[0_1px_6px_0_rgba(32,33,36,.28)]
-          transition-transform duration-300 ease-in-out
-          ${mobileNavVisible ? "h-screen overflow-y-auto no-doc-scroll" : "h-auto"}
-        `}
+         bg-white w-full shadow-[0_1px_6px_0_rgba(32,33,36,.28)]
+         ${headerState !== "unfixed" ? "transition-transform duration-300 ease-in-out" : ""}
+         ${mobileNavVisible ? "h-screen overflow-y-auto no-doc-scroll" : "h-auto"}
+          `}
         style={{
           transform: shouldShow ? "translateY(0)" : "translateY(-100%)",
         }}

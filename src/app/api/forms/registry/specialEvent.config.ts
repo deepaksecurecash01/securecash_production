@@ -19,7 +19,7 @@ import {
 import {
   prepareSiteInfoAdminNotificationEmail,
   prepareSiteInfoUserConfirmationEmail,
-} from "../services/emailService";
+} from "./siteInfo.config";
 import type { FormConfig, FormData, ReadPdfFileFn } from "./formRegistry.types";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 
-export default function useHideOnScroll(threshold: number = 100): boolean {
-  const [isVisible, setIsVisible] = useState(true);
+export type HeaderState = "unfixed" | "pinned" | "unpinned";
+
+export default function useHeaderState(threshold: number = 100): HeaderState {
+  const [headerState, setHeaderState] = useState<HeaderState>("unfixed");
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -9,25 +11,19 @@ export default function useHideOnScroll(threshold: number = 100): boolean {
       const currentScrollY = window.scrollY;
 
       if (currentScrollY < threshold) {
-        setIsVisible(true);
+        setHeaderState("unfixed");
       } else if (currentScrollY > lastScrollY.current) {
-        setIsVisible(false);
+        setHeaderState("unpinned");
       } else {
-        setIsVisible(true);
+        setHeaderState("pinned");
       }
 
       lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-
-    // ℹ️ removeEventListener does not accept { passive } — that option only
-    //    applies to addEventListener. Browsers match listeners by function
-    //    reference, so this cleanup correctly removes the registered handler.
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [threshold]);
 
-  return isVisible;
+  return headerState;
 }

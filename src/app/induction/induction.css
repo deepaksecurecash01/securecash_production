@@ -1,41 +1,74 @@
-/* Scoped styles for Induction Lesson Content - Mirrored from Blog */
-.induction-content {
-  max-width: 900px;
-  margin: 0 auto;
-  color: #333;
+/* ─── Induction Content ──────────────────────────────────────────────────────
+   Scoped styles for lesson HTML content rendered via dangerouslySetInnerHTML.
+   Merged from induction.css + style.css — duplicate ul rules removed.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.induction-content-wrap strong {
+  font-weight: 700 !important;
 }
 
-.induction-content p {
+/* ─── Main Content Wrapper ─────────────────────────────────────────────────── */
+
+.induction-single-main {
+  margin-bottom: 100px;
+}
+
+.induction-single-main--wrap {
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.induction-single-main--content {
+  margin: 0 auto 70px;
+  max-width: 900px;
+  position: relative;
+}
+
+/* ─── Typography ────────────────────────────────────────────────────────────── */
+
+.induction-single-main--content p {
   font-weight: 300;
   line-height: 2em;
-  margin-bottom: 1.25rem;
-  font-family: var(--font-montserrat, sans-serif); /* Assuming you use Montserrat variable */
+  margin-bottom: 1rem;
 }
 
-.induction-content h1, 
-.induction-content h2 {
+.induction-single-main--content a {
+  color: #c7a652;
+}
+
+.induction-single-main--content a:hover {
+  text-decoration: underline;
+}
+
+.induction-single-main--content h1 {
   font-size: 26px;
   font-weight: 700;
   margin: 38px 0 18px;
-  color: #1a1a1a;
 }
 
-.induction-content h3, 
-.induction-content h4 {
+.induction-single-main--content h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 26px 0 16px;
+}
+
+.induction-single-main--content h4 {
   font-size: 22px;
   font-weight: 600;
   margin: 26px 0 16px;
 }
 
-/* Custom List Styling from Blog */
-.induction-content ul {
+/* ─── Lists — single canonical block (previous duplicate removed) ──────────── */
+
+.induction-single-main--content ul {
   list-style: none;
   padding-left: 0;
   margin-left: 0;
   margin-bottom: 26px;
 }
 
-.induction-content ul li {
+.induction-single-main--content ul li {
   position: relative;
   padding-left: 1.5em;
   margin-bottom: 0.5em;
@@ -43,16 +76,138 @@
   font-weight: 300;
 }
 
-.induction-content ul li::before {
+.induction-single-main--content ul li::before {
   content: "\2022";
   position: absolute;
   left: 0;
   top: 0;
   font-size: 20px;
   font-weight: 900;
-  color: #c6a54b; /* SecureCash Gold */
+  color: #c6a54b;
+  /* SecureCash Gold */
 }
 
-.induction-content strong {
+.induction-single-main--content strong {
   font-weight: 600;
+}
+
+/* ─── Images ────────────────────────────────────────────────────────────────── */
+
+.induction-single-main--content__feature-img {
+  display: block;
+  max-height: 100%;
+  max-width: 100%;
+  margin: 40px auto;
+  height: 420px;
+  object-fit: cover;
+  width: 100%;
+}
+
+/* ─── Callout Blocks ────────────────────────────────────────────────────────── */
+
+.induction-single-main--content .content-callout {
+  background: #f2f2f2;
+  padding: 30px;
+  margin: 30px 0;
+}
+
+.induction-single-main--content .content-callout p {
+  margin-bottom: 0;
+}
+
+/* ─── Blockquote ────────────────────────────────────────────────────────────── */
+
+.induction-single-main--content blockquote {
+  border-left: 3px solid #1d2b36;
+  margin: 35px 0;
+  padding: 5px 0 5px 18px;
+  font-style: italic;
+  line-height: 2em;
+}
+
+.induction-single-main--content blockquote cite {
+  display: block;
+  font-size: 85%;
+  line-height: 1.8;
+  margin-top: 0.85em;
+}
+
+.induction-single-main--content blockquote cite::before {
+  content: "\2014";
+  padding-right: 6px;
+}
+
+/* ─── Tables ────────────────────────────────────────────────────────────────── */
+
+.induction-single-main--content-table {
+  border: 1px solid #b7b7b7;
+  text-align: center;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+
+.induction-single-main--content-table th {
+  border: 1px solid #b7b7b7;
+  height: 40px;
+}
+
+.induction-single-main--content-table td {
+  border: 1px solid #b7b7b7;
+  line-height: 1.3;
+  height: 30px;
+  padding: 6px 0;
+}
+
+/* ─── External Link Icon ────────────────────────────────────────────────────── */
+
+.link-new-tab {
+  display: flex;
+  position: relative;
+  align-items: center;
+}
+
+.link-new-tab:after {
+  content: "";
+  width: 28px;
+  height: 18px;
+  padding-left: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='18' height='18' fill='none' stroke='%23737373' stroke-width='2'%3E%3Cpath d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'%3E%3C/path%3E%3Cpolyline points='15 3 21 3 21 9'%3E%3C/polyline%3E%3Cline x1='10' y1='14' x2='21' y2='3'%3E%3C/line%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px;
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+  .induction-single-main--content {
+    margin-top: 40px;
+    max-width: 768px;
+  }
+}
+
+@media (max-width: 768px) {
+  .induction-single-main--content {
+    padding-bottom: 70px;
+    margin-bottom: 42px;
+  }
+
+  .induction-content-wrap {
+    padding: 0 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .induction-single-main--content__feature-img {
+    height: auto;
+    object-fit: contain;
+  }
+
+  .induction-single-main--content h4 {
+    font-size: 20px;
+  }
+
+  .induction-content-wrap {
+    padding: 0 26px;
+  }
 }

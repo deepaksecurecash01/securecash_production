@@ -21,8 +21,67 @@ import {
   queueEmail,
   sendEmailWithRetry,
 } from "../services/emailQueue";
-import { prepareInductionEmail } from "../services/emailService";
+import { EmailAttachment, PreparedEmail } from "../services/emailService";
+import inductionEmailTemplate from "../templates/inductionEmailTemplate";
+import { getMimeType } from "../utils/attachments";
+import { getCurrentDateTime } from "../utils/Helpers";
 import type { FormConfig, FormData, ReadPdfFileFn } from "./formRegistry.types";
+
+export const prepareInductionEmail = (
+  formData: FormData,
+  readPdfFile: ReadPdfFileFn,
+): PreparedEmail => {
+  const currentDateTime = getCurrentDateTime();
+  const htmlContent = inductionEmailTemplate(formData, currentDateTime);
+
+  const attachments: EmailAttachment[] = [];
+
+  if (formData.attachments && Array.isArray(formData.attachments)) {
+    formData.attachments.forEach((attachment, index) => {
+      try {
+        if (attachment?.data && attachment?.filename) {
+          // Strip data URI prefix if present
+          let base64Data = attachment.data;
+          if (base64Data.includes(",")) {
+            base64Data = base64Data.split(",")[1];
+          }
+
+          const sizeBytes = Buffer.byteLength(base64Data, "base64");
+          if (sizeBytes > 5 * 1024 * 1024) {
+            console.warn(
+              `Attachment ${attachment.filename} exceeds 5MB, skipping`,
+            );
+            return;
+          }
+
+          const detectedMimeType = getMimeType(attachment.filename);
+
+          attachments.push({
+            content: base64Data,
+            filename: attachment.filename,
+            type: detectedMimeType,
+            disposition: "attachment",
+          });
+        }
+      } catch (error) {
+        console.error(`Error processing induction attachment ${index}:`, error);
+      }
+    });
+  }
+
+  const name = typeof formData.Name === "string" ? formData.Name : "";
+  const state = typeof formData.State === "string" ? formData.State : "";
+
+  return {
+    to: "deepak@securecash.com.au",
+    from: "SecureCash Operations <operations@securecash.com.au>",
+    replyTo: typeof formData.Email === "string" ? formData.Email : undefined,
+    subject: `Induction Complete - ${name}, ${state}`,
+    text: "Please enable HTML emails in your email client to view the contents of this email.",
+    html: htmlContent,
+    attachments: attachments.length > 0 ? attachments : undefined,
+  };
+};
 
 export const inductionConfig: FormConfig = {
   key: "induction",

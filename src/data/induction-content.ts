@@ -16,7 +16,7 @@ export interface VideoModule {
   source?: "vimeo" | "youtube";
 }
 
-// ✅ Corrected: Changed 'url' to 'src' to match your data
+// Corrected: Changed 'url' to 'src' to match your data
 export interface ImageModule {
   type: "image";
   src: string; // <-- Updated this from 'url'

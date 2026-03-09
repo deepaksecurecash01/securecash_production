@@ -1,5 +1,8 @@
 "use client";
-import { INDUCTION_DATA, InductionLesson } from "@/data/induction-content";
+import {
+  INDUCTION_DATA,
+  type InductionLesson,
+} from "@/data/induction-content";
 import ScrollableSection from "@/components/layout/ScrollbarSection";
 import { useState, useEffect, useRef } from "react";
 
@@ -119,7 +122,7 @@ const QuizEngine = ({
   // Auto-dismiss success message after 5 seconds.
   useEffect(() => {
     if (status === "success") {
-      dismissTimeoutRef.current = setTimeout(() => setStatus("idle"), 5000);
+      dismissTimeoutRef.current = setTimeout(() => setStatus("idle"), 3000);
       return () => {
         if (dismissTimeoutRef.current) clearTimeout(dismissTimeoutRef.current);
       };
@@ -173,7 +176,7 @@ const QuizEngine = ({
         onPass();
         setAnswers({});
         setStatus("idle");
-      }, 5000);
+      }, 3000);
     } else {
       setStatus("error");
       setTimeout(scrollQuizToBottom, 100);

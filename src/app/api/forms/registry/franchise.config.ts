@@ -13,11 +13,66 @@ import {
   queueEmail,
   type EmailTaskRuntime,
 } from "../services/emailQueue";
-import {
-  prepareFranchiseAdminInquiryEmail,
-  prepareFranchiseUserWelcomeEmail,
-} from "../services/emailService";
+import { AttachmentConfig, EmailAttachment, PreparedEmail, preparePdfAttachmentsWithCache } from "../services/emailService";
+import franchiseAdminInquiryEmailTemplate from "../templates/franchiseAdminInquiryEmailTemplate";
+import franchiseUserWelcomeEmailTemplate from "../templates/franchiseUserWelcomeEmailTemplate";
+
 import type { FormConfig, FormData, ReadPdfFileFn } from "./formRegistry.types";
+
+export const prepareFranchiseAdminInquiryEmail = (
+  formData: FormData,
+  readPdfFile?: ReadPdfFileFn,
+): PreparedEmail => {
+  const htmlContent = franchiseAdminInquiryEmailTemplate(formData);
+
+  return {
+    to: "deepak@securecash.com.au",
+    from: "SecureCash Franchise <franchise@securecash.com.au>",
+    replyTo: typeof formData.Email === "string" ? formData.Email : undefined,
+    subject: `SecureCash - Franchise Expression of Interest - ${typeof formData.FullName === "string" ? formData.FullName : "Unknown"}`,
+    text: "Please enable HTML emails in your email client to view the contents of this email.",
+    html: htmlContent,
+  };
+};
+
+export const prepareFranchiseUserWelcomeEmail = (
+  formData: FormData,
+  readPdfFile: ReadPdfFileFn,
+): PreparedEmail => {
+  const attachments: EmailAttachment[] = [];
+  const attachmentConfigs: AttachmentConfig[] = [
+    {
+      filename: "ACCC-Information-Statement.pdf",
+      displayName:
+        "ACCC - 2025 Information Statement for Prospective Franchisees.pdf",
+    },
+    {
+      filename: "SecureCash-Franchise-Prospectus.pdf",
+      displayName: "SecureCash Franchise Prospectus.pdf",
+    },
+    {
+      filename: "SecureCash-DL-Flyer.pdf",
+      displayName: "SecureCash Flyer.pdf",
+    },
+    { filename: "eDockets-DL-Flyer.pdf", displayName: "eDockets Flyer.pdf" },
+  ];
+
+  const pdfAttachments = preparePdfAttachmentsWithCache({
+    attachments,
+    attachmentConfigs,
+    readPdfFile,
+  });
+  const htmlContent = franchiseUserWelcomeEmailTemplate();
+
+  return {
+    to: typeof formData.Email === "string" ? formData.Email : undefined,
+    from: "SecureCash Franchise <franchise@securecash.com.au>",
+    subject: "SecureCash Franchise Enquiry",
+    text: "Please enable HTML emails in your email client to view the contents of this email.",
+    html: htmlContent,
+    attachments: pdfAttachments,
+  };
+};
 
 const buildFranchiseTasks = (
   data: FormData,

@@ -12,8 +12,29 @@ import {
   queueEmail,
   sendEmailWithRetry,
 } from "../services/emailQueue";
-import { prepareAustracSubmissionEmail } from "../services/emailService";
+import { PreparedEmail } from "../services/emailService";
+import austracSubmissionEmailTemplate from "../templates/austracSubmissionEmailTemplate";
+import { getCurrentDateTime } from "../utils/Helpers";
 import type { FormConfig, FormData, ReadPdfFileFn } from "./formRegistry.types";
+
+export const prepareAustracSubmissionEmail = (
+  formData: FormData,
+  readPdfFile?: ReadPdfFileFn,
+): PreparedEmail => {
+  const currentDateTime = getCurrentDateTime();
+  const htmlContent = austracSubmissionEmailTemplate(formData, currentDateTime);
+
+  return {
+    to:
+      typeof formData.OrganisationEmail === "string"
+        ? formData.OrganisationEmail
+        : undefined,
+    from: "SecureCash Sign Up <sign-up@securecash.com.au>",
+    subject: `AUSTRAC - ${typeof formData.Organisation === "string" ? formData.Organisation : "Unknown Organisation"}`,
+    text: "Please enable HTML emails in your email client to view the contents of this email.",
+    html: htmlContent,
+  };
+};
 
 export const austracConfig: FormConfig = {
   key: "austrac",

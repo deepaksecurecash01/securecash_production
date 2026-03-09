@@ -42,7 +42,7 @@ const InductionContext = createContext<InductionContextType | null>(null);
 const AUTH_DURATION = 2 * 60 * 60 * 1000;
 
 export const InductionProvider = ({ children }: InductionProviderProps) => {
-  // ✅ CHANGED: Read auth immediately from localStorage (synchronous)
+  // CHANGED: Read auth immediately from localStorage (synchronous)
   const getInitialAuth = (): boolean => {
     if (typeof window === "undefined") return false;
 
@@ -65,9 +65,9 @@ export const InductionProvider = ({ children }: InductionProviderProps) => {
     }
   };
 
-  // ✅ CHANGED: Initialize with actual auth state (no loading needed)
+  // CHANGED: Initialize with actual auth state (no loading needed)
   const [isAuthenticated, setIsAuthenticated] = useState(getInitialAuth);
-  const [isLoading, setIsLoading] = useState<boolean>(false); // ✅ CHANGED: Start as false
+  const [isLoading, setIsLoading] = useState<boolean>(false); // CHANGED: Start as false
 
   // Progress State
   const [progress, setProgress] = useState<InductionProgress>({
@@ -76,7 +76,7 @@ export const InductionProvider = ({ children }: InductionProviderProps) => {
     isCourseComplete: false,
   });
 
-  // ✅ CHANGED: Simplified initial load - only load progress
+  // CHANGED: Simplified initial load - only load progress
   useEffect(() => {
     const savedProgress = localStorage.getItem("induction_progress_v1");
     if (savedProgress) {
@@ -96,7 +96,7 @@ export const InductionProvider = ({ children }: InductionProviderProps) => {
     localStorage.setItem("induction_progress_v1", JSON.stringify(progress));
   }, [progress]);
 
-  // ✅ CHANGED: Updated login to use localStorage with expiration
+  // CHANGED: Updated login to use localStorage with expiration
   const login = (username: string, password: string) => {
     const validUsername =
       process.env.NEXT_PUBLIC_INDUCTION_USERNAME || "testing";
@@ -115,7 +115,7 @@ export const InductionProvider = ({ children }: InductionProviderProps) => {
     return false;
   };
 
-  // ✅ NEW: Logout function
+  // NEW: Logout function
   const logout = () => {
     localStorage.removeItem("induction_auth");
     setIsAuthenticated(false);
@@ -144,10 +144,10 @@ export const InductionProvider = ({ children }: InductionProviderProps) => {
     <InductionContext.Provider
       value={{
         isAuthenticated,
-        isLoading, // ✅ Now always false, kept for compatibility
+        isLoading, // Now always false, kept for compatibility
         progress,
         login,
-        logout, // ✅ NEW
+        logout, // NEW
         completeLesson,
         currentLesson: INDUCTION_DATA.lessons[progress.currentLessonIndex],
         totalLessons: INDUCTION_DATA.lessons.length,

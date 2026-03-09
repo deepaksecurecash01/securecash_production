@@ -19,11 +19,76 @@ import {
   queueEmail,
   type EmailTaskRuntime,
 } from "../services/emailQueue";
-import {
-  prepareSiteInfoAdminNotificationEmail,
-  prepareSiteInfoUserConfirmationEmail,
-} from "../services/emailService";
+import { AttachmentConfig, EmailAttachment, PreparedEmail, preparePdfAttachmentsWithCache } from "../services/emailService";
+import siteInfoAdminNotificationEmailTemplate from "../templates/siteInfoAdminNotificationEmailTemplate";
+import siteInfoUserConfirmationEmailTemplate from "../templates/siteInfoUserConfirmationEmailTemplate";
+import { formatArrayField, getCurrentDateTime } from "../utils/Helpers";
 import type { FormConfig, FormData, ReadPdfFileFn } from "./formRegistry.types";
+
+export const prepareSiteInfoAdminNotificationEmail = (
+  formData: FormData,
+  readPdfFile?: ReadPdfFileFn,
+): PreparedEmail => {
+  const currentDateTime = getCurrentDateTime();
+  const htmlContent = siteInfoAdminNotificationEmailTemplate(
+    formData,
+    currentDateTime,
+    formatArrayField,
+  );
+
+  const businessName =
+    typeof formData.BusinessName === "string" ? formData.BusinessName : "";
+  const postcode =
+    typeof formData.Postcode === "string" ? formData.Postcode : "";
+  const type =
+    typeof formData.Type === "string" ? formData.Type : "Regular Service";
+
+  return {
+    to: "deepak@securecash.com.au",
+    from: "SecureCash Sign Up <sign-up@securecash.com.au>",
+    subject: `Site Info - ${businessName} (${postcode}), ${type}`,
+    text: "Please enable HTML emails in your email client to view the contents of this email.",
+    html: htmlContent,
+  };
+};
+
+export const prepareSiteInfoUserConfirmationEmail = (
+  formData: FormData,
+  readPdfFile: ReadPdfFileFn,
+): PreparedEmail => {
+  const attachments: EmailAttachment[] = [];
+  const attachmentConfigs: AttachmentConfig[] = [
+    {
+      filename: "SecureCash-Online-Services-Flyer.pdf",
+      displayName: "SecureCash Online Services Flyer.pdf",
+    },
+    {
+      filename: "How-to-Prepare-Your-Banking.pdf",
+      displayName: "How to Prepare Your Banking.pdf",
+    },
+  ];
+
+  const pdfAttachments = preparePdfAttachmentsWithCache({
+    attachments,
+    attachmentConfigs,
+    readPdfFile,
+  });
+  const htmlContent = siteInfoUserConfirmationEmailTemplate(formData);
+
+  const businessName =
+    typeof formData.BusinessName === "string" ? formData.BusinessName : "";
+  const type =
+    typeof formData.Type === "string" ? formData.Type : "Regular Service";
+
+  return {
+    to: typeof formData.Email === "string" ? formData.Email : undefined,
+    from: "SecureCash Sign Up <sign-up@securecash.com.au>",
+    subject: `SecureCash Business Enrolment - ${businessName} (${type})`,
+    text: "Please enable HTML emails in your email client to view the contents of this email.",
+    html: htmlContent,
+    attachments: pdfAttachments,
+  };
+};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

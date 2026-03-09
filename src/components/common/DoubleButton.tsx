@@ -1,13 +1,13 @@
 import Link from "next/link";
 import React from "react";
 
-// ✅ Define the shape of a button object
+// Define the shape of a button object
 interface ButtonConfig {
   text: string;
   href: string;
 }
 
-// ✅ Define component props
+// Define component props
 interface DoubleButtonProps {
   primaryButton?: ButtonConfig;
   secondaryButton?: ButtonConfig;

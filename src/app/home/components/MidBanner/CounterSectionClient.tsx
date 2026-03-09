@@ -73,6 +73,10 @@ export default function CounterSectionClient({
   const [hasAnimated, setHasAnimated] = useState(false);
 
   const sectionRef = useRef<HTMLElement>(null);
+  // Ref holds latest stats value for comparison — avoids adding stats to
+  // the fetch effect's dependency array which would cause a re-fetch loop
+  // every time setStats updates state after a successful fetch.
+  const statsRef = useRef<Stats>(initialStats);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -116,10 +120,11 @@ export default function CounterSectionClient({
           }
 
           if (
-            data.customers !== stats.customers ||
-            data.servicesPerformed !== stats.servicesPerformed ||
-            data.cashMoved !== stats.cashMoved
+            data.customers !== statsRef.current.customers ||
+            data.servicesPerformed !== statsRef.current.servicesPerformed ||
+            data.cashMoved !== statsRef.current.cashMoved
           ) {
+            statsRef.current = data; // ← update ref before state to keep in sync
             setStats(data);
           }
         })
@@ -132,7 +137,7 @@ export default function CounterSectionClient({
     }, 150);
 
     return () => clearTimeout(timer);
-  }, [isVisible, stats]);
+  }, [isVisible]); // ← stats removed — comparison uses statsRef instead
 
   return (
     <section
