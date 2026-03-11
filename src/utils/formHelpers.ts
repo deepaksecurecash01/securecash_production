@@ -87,8 +87,6 @@ export const getDeviceInfo = (): DeviceInfo => {
   };
 };
 
-
-
 const getOrdinalSuffix = (day: number): string => {
   if (day === 1 || day === 21 || day === 31) return "st";
   if (day === 2 || day === 22) return "nd";
@@ -147,17 +145,16 @@ export interface FormMetadata {
   timestamp: string;
   formId: string;
   submissionId: string;
-  "IP Address": string;
   Device: string;
   Browser: string;
   "Operating System": string;
   dateOfSubmission: string;
 }
 
-export const prepareFormMetadata = (
+export const prepareFormMetadata = async (
   formType: string,
   formId: string,
-): FormMetadata => {
+): Promise<FormMetadata> => {
   const deviceInfo = getDeviceInfo();
   const submissionDate = formatSubmissionDate();
 
@@ -166,7 +163,6 @@ export const prepareFormMetadata = (
     timestamp: new Date().toISOString(),
     formId,
     submissionId: `${formType}_${Date.now()}`,
-    "IP Address": "collected server-side",
     Device: deviceInfo.fullUserAgent,
     Browser: `${deviceInfo.browser} ${deviceInfo.browserVersion}`,
     "Operating System": deviceInfo.os,

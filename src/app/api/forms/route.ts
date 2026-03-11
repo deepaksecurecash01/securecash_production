@@ -38,6 +38,15 @@ interface ApiResponse {
 initializePdfCache();
 
 export async function POST(req: Request): Promise<NextResponse> {
+  const origin = req.headers.get("origin");
+  const allowedOrigins = [
+    process.env.NEXT_PUBLIC_SITE_URL,
+    "http://localhost:3000",
+  ].filter(Boolean);
+
+  if (!origin || !allowedOrigins.includes(origin)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
   const startTime = performance.now();
 
   try {
@@ -61,23 +70,26 @@ export async function POST(req: Request): Promise<NextResponse> {
     }
 
     const { formType, ...rawData } = await req.json();
-      const injectionScan = scanFormData(rawData);
-      if (injectionScan) {
-        return NextResponse.json(
-          {
-            error: "Bad request",
-            field: injectionScan.field,
-            reason: injectionScan.reason,
-          },
-          { status: 400 },
-        );
-      }
-    const ipAddress =
-      req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
-      req.headers.get("x-real-ip") ??
-      "unknown";
-    const formData = sanitizeFormData({ ...rawData, "IP Address": ipAddress });
+    const injectionScan = scanFormData(rawData);
+    if (injectionScan) {
+      return NextResponse.json(
+        {
+          error: "Bad request",
+          field: injectionScan.field,
+          reason: injectionScan.reason,
+        },
+        { status: 400 },
+      );
+    }
+    const forwarded = req.headers.get("x-forwarded-for");
+    const ip = forwarded
+      ? forwarded.split(",")[0].trim()
+      : (req.headers.get("x-real-ip") ?? "unknown");
 
+    const formData = sanitizeFormData({
+      ...rawData,
+      "IP Address": ip,
+    });
     const parseTime = performance.now();
 
     if (!formType) {

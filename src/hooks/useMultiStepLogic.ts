@@ -52,7 +52,6 @@ export const useMultiStepLogic = <T extends FieldValues>({
   const initialSubmitEnabled = hybrid?.submitEnabled ?? false;
   const [submitButtonEnabled, setSubmitButtonEnabled] =
     useState(initialSubmitEnabled);
-  const [showReviewStep, setShowReviewStep] = useState(false);
 
   const isMultiStep =
     !!multiStep && multiStep.steps && multiStep.steps.length > 1;
@@ -193,28 +192,28 @@ export const useMultiStepLogic = <T extends FieldValues>({
     ],
   );
 
-const isLastStep = useCallback(
-  (formDataOverride: T | null = null) => {
-    if (!isMultiStep) return true;
+  const isLastStep = useCallback(
+    (formDataOverride: T | null = null) => {
+      if (!isMultiStep) return true;
 
-    if (isHybrid) {
+      if (isHybrid) {
+        return currentStep === multiStep!.steps.length - 1;
+      }
+
+      const { stepId } = getCurrentStep();
+      const dataToCheck = formDataOverride || stepData;
+      const services = getServices(dataToCheck as FieldValues);
+
+      if (multiStep!.conditional) {
+        if (stepId === "quote") return services.length === 0;
+        if (stepId === "banking") return !services.includes("Change");
+        if (stepId === "change") return true;
+      }
+
       return currentStep === multiStep!.steps.length - 1;
-    }
-
-    const { stepId } = getCurrentStep();
-    const dataToCheck = formDataOverride || stepData;
-    const services = getServices(dataToCheck as FieldValues);
-
-    if (multiStep!.conditional) {
-      if (stepId === "quote") return services.length === 0;
-      if (stepId === "banking") return !services.includes("Change");
-      if (stepId === "change") return true;
-    }
-
-    return currentStep === multiStep!.steps.length - 1;
-  },
-  [isMultiStep, isHybrid, getCurrentStep, stepData, currentStep, multiStep],
-);
+    },
+    [isMultiStep, isHybrid, getCurrentStep, stepData, currentStep, multiStep],
+  );
   const getProgress = useMemo(() => {
     if (!isMultiStep) return { current: 1, total: 1, percentage: 100 };
 
@@ -255,7 +254,6 @@ const isLastStep = useCallback(
     setCompletedSteps(new Set());
     if (isHybrid) {
       setSubmitButtonEnabled(hybrid?.submitEnabled ?? false);
-      setShowReviewStep(false);
     }
   }, [defaultValues, isHybrid, hybrid]);
 
@@ -264,7 +262,6 @@ const isLastStep = useCallback(
     stepData,
     completedSteps,
     submitButtonEnabled,
-    showReviewStep,
     isMultiStep,
     isHybrid,
     getCurrentStep,

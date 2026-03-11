@@ -59,7 +59,7 @@ const formatAgreementDate = (): string =>
 
 const INPUT_FIELDS: FieldConfig<TermsFormData>[] = [
   {
-    name: "Name",
+    name: "FullName",
     type: "text",
     label: "What is your full name?",
     placeholder: "Enter your full name",
@@ -127,14 +127,14 @@ const TermsForm = ({
     theme: "dark",
     formType: "terms",
     formId: "Terms",
-    // onSuccess: () => router.push("/austrac"),
+    onSuccess: () => router.push("/austrac"),
     onError: (error: unknown) => console.error("Terms submission error", error),
     prepareData: async (data: TermsFormData) => ({
       ...data,
       "Organisation Name": data.Organisation,
       "Organisation Role": data.Position,
       "Organisation ABN": data.ABN,
-      "Full Name": data.Name,
+      "Full Name": data.FullName,
       Birthday: formatBirthdayForAPI(data.Birthdate),
       Email: data.Email,
       formType: "terms",
@@ -144,7 +144,7 @@ const TermsForm = ({
   });
 
   // Sync watched values up to parent for the live preview in FormSection
-  const nameValue = formManager.watch("Name");
+  const nameValue = formManager.watch("FullName");
   const positionValue = formManager.watch("Position");
   const organisationValue = formManager.watch("Organisation");
   const abnValue = formManager.watch("ABN");

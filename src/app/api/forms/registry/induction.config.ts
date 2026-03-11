@@ -69,7 +69,7 @@ export const prepareInductionEmail = (
     });
   }
 
-  const name = typeof formData.Name === "string" ? formData.Name : "";
+  const name = typeof formData.FullName === "string" ? formData.FullName : "";
   const state = typeof formData.State === "string" ? formData.State : "";
 
   return {
@@ -88,7 +88,7 @@ export const inductionConfig: FormConfig = {
 
   validation: {
     requiredFields: [
-      "Name",
+      "FullName",
       "Phone",
       "Email",
       "Address",
@@ -129,7 +129,7 @@ export const inductionConfig: FormConfig = {
   response: "Induction form submitted successfully!",
 
   logData: (data) => ({
-    name: data.Name,
+    name: data.FullName,
     state: data.State,
     contractor: data.ContractorName,
   }),

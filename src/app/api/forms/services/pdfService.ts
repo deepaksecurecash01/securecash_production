@@ -1,8 +1,7 @@
 import { PDFDocument, PDFPage, rgb } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 
-// index signature uses unknown (not any) — formData originates from req.json()
-// Callers must narrow individual fields before use.
+
 interface ExecutedAgreementData {
   "Date of Acceptance"?: string;
   [key: string]: unknown;

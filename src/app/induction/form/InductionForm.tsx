@@ -309,7 +309,7 @@ const InductionForm = () => {
           </label>
           <UniversalFormField
             {...formManager.getFieldProps({
-              name: "Name",
+              name: "FullName",
               type: "text",
               placeholder: "Your Full Name",
             })}

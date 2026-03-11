@@ -8,7 +8,7 @@ import {
 // ─── SCHEMA ───────────────────────────────────────────────────────────────────
 
 export const InductionFormSchema = z.object({
-  Name: CommonValidations.fullName(),
+  FullName: CommonValidations.fullName(),
 
   Phone: CommonValidations.phone(10, 15),
 
@@ -79,7 +79,7 @@ export type InductionFormInput = z.input<typeof InductionFormSchema>;
 // File | undefined, which matches useFormManager's DeepPartial<TFormData>.
 // .refine() ensures both fields are still required on submission.
 export const INDUCTION_DEFAULT_VALUES: InductionFormInput = {
-  Name: "",
+  FullName: "",
   Phone: "",
   Email: "",
   Address: "",
@@ -97,7 +97,7 @@ export const INDUCTION_DEFAULT_VALUES: InductionFormInput = {
 // BotField not included — no honeypot in this authenticated form.
 
 export const INDUCTION_FIELD_PRIORITY: Array<keyof InductionFormData> = [
-  "Name",
+  "FullName",
   "Phone",
   "Email",
   "Address",

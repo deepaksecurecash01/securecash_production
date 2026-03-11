@@ -25,6 +25,7 @@ import {
 import BankingStep from "./steps/BankingStep";
 import ChangeStep from "./steps/ChangeStep";
 import QuoteSuccessMessage from "./QuoteSuccessMessage";
+import { captureError, captureEvent } from "@/utils/monitoring";
 
 const SERVICE_OPTIONS = [
   { label: "Banking", value: "Banking" },
@@ -33,7 +34,7 @@ const SERVICE_OPTIONS = [
 
 const QUOTE_FIELDS: FieldConfig[] = [
   {
-    name: "Name",
+    name: "FullName",
     type: "text",
     label: "Full Name",
     placeholder: "Enter your full name",
@@ -130,9 +131,8 @@ const QuoteForm = ({ className }: { className?: string }) => {
         return nextSteps;
       },
     },
-    onSuccess: (data: unknown) =>
-      console.log("Quote submitted successfully", data),
-    onError: (error: unknown) => console.error("Quote submission error", error),
+    onSuccess: () => {},
+    onError: (error: unknown) => captureError(error, { form: "quote" }),
     prepareData: async (data: QuoteFormData) => ({
       ...data,
       formType: "quote",
@@ -140,7 +140,7 @@ const QuoteForm = ({ className }: { className?: string }) => {
   });
 
   const { stepId, isFirst } = formManager.getCurrentStep();
-  const userName = formManager.getStepData().Name || "";
+  const userName = formManager.getStepData().FullName || "";
 
   const renderCurrentStep = () => {
     switch (stepId) {

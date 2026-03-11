@@ -17,7 +17,7 @@ const icaOperationsReviewEmailTemplate = (formData: FormData): string =>
       "The Agreement",
       `
       <table style="margin-left:8px;">
-        ${emailRow("Full Name", String(formData.Name ?? ""))}
+        ${emailRow("Full Name", String(formData.FullName ?? ""))}
         ${emailRow("Org. Structure", String(formData.OrganisationType ?? ""))}
         ${emailRow("ABN", String(formData.ABN ?? ""))}
         ${emailRow("Phone", String(formData.Phone ?? ""))}
@@ -34,7 +34,7 @@ const icaOperationsReviewEmailTemplate = (formData: FormData): string =>
       `
       <table style="margin-left:8px;">
         ${emailRow("Date of Deed", String(formData.DateDeed ?? ""))}
-        ${emailRow("Guarantor's Name", String(formData.Name ?? ""))}
+        ${emailRow("Guarantor's Name", String(formData.NameConfirm ?? ""))}
         ${emailRow("Residential Address", String(formData.AddressResidential ?? ""))}
         ${emailRow("Business Name", String(formData.BusinessName ?? ""))}
       </table>

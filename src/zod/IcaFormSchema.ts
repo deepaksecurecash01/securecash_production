@@ -6,7 +6,7 @@ import {
 } from "./validationHelpers";
 
 export const IcaFormSchema = z.object({
-  Name: CommonValidations.fullName(),
+  FullName: CommonValidations.fullName(),
 
   OrganisationType: CommonValidations.selectRequired("Organisation type"),
 
@@ -106,7 +106,7 @@ export type IcaFormData = z.infer<typeof IcaFormSchema>;
 export type IcaFormInput = z.input<typeof IcaFormSchema>;
 
 export const ICA_DEFAULT_VALUES: IcaFormInput = {
-  Name: "",
+  FullName: "",
   OrganisationType: "",
   ABN: "",
   Phone: "",
@@ -129,7 +129,7 @@ export const ICA_DEFAULT_VALUES: IcaFormInput = {
 };
 
 export const ICA_FIELD_PRIORITY: Array<keyof IcaFormData> = [
-  "Name",
+  "FullName",
   "OrganisationType",
   "ABN",
   "Phone",

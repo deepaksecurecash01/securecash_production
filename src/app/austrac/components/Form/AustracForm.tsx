@@ -6,6 +6,7 @@ import FormFieldList from "@/components/form/utils/core/FormFieldList";
 import FormSubmitButton from "@/components/form/utils/core/FormSubmitButton";
 import HoneypotField from "@/components/form/utils/core/HoneypotField";
 import { useFormManager } from "@/hooks/useFormManager";
+import { captureError } from "@/utils/monitoring";
 import {
   AUSTRAC_DEFAULT_VALUES,
   AustracFormData,
@@ -123,9 +124,8 @@ const AustracForm = ({
     theme: "dark",
     formType: "austrac",
     formId: "AUSTRAC",
-    onSuccess: () => router.push("/site-info"),
-    onError: (error: unknown) =>
-      console.error("AUSTRAC submission error", error),
+    // onSuccess: () => router.push("/site-info"),
+    onError: (error: unknown) => captureError(error, { form: "austrac" }),
     prepareData: async (data: AustracFormData) => ({
       ...data,
       formType: "austrac",

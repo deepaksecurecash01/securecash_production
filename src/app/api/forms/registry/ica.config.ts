@@ -94,7 +94,7 @@ export const prepareICAOperationsReviewEmail = (
     to: "deepak@securecash.com.au",
     from: "operations@securecash.com.au",
     replyTo,
-    subject: `Independent Contractor Agreement - ${typeof formData.Name === "string" ? formData.Name : ""}, ${typeof formData.BusinessName === "string" ? formData.BusinessName : ""}`,
+    subject: `Independent Contractor Agreement - ${typeof formData.FullName === "string" ? formData.FullName : ""}, ${typeof formData.BusinessName === "string" ? formData.BusinessName : ""}`,
     text: "Please enable HTML emails in your email client to view the contents of this email.",
     html: htmlContent,
     attachments: pdfAttachments,
@@ -125,8 +125,8 @@ export const prepareICAContractorWelcomeEmail = (
   const htmlContent = icaContractorWelcomeEmailTemplate(formData);
 
   const name =
-    typeof formData.Name === "string"
-      ? formData.Name
+    typeof formData.FullName === "string"
+      ? formData.FullName
       : typeof formData.CompanyName === "string"
         ? formData.CompanyName
         : "Unknown";
@@ -156,7 +156,7 @@ export const prepareICAEdocketsIntroductionEmail = (
   return {
     to: typeof formData.Email === "string" ? formData.Email : undefined,
     from: "info@edockets.app",
-    subject: `eDocket App - ${typeof formData.Name === "string" ? formData.Name : "Name"}, ${typeof formData.BusinessName === "string" ? formData.BusinessName : "Business"}`,
+    subject: `eDocket App - ${typeof formData.FullName === "string" ? formData.FullName : "Name"}, ${typeof formData.BusinessName === "string" ? formData.BusinessName : "Business"}`,
     text: "Please enable HTML emails in your email client to view the contents of this email.",
     html: htmlContent,
   };
@@ -196,7 +196,7 @@ export const icaConfig: FormConfig = {
 
   validation: {
     requiredFields: [
-      "Name",
+      "FullName",
       "OrganisationType",
       "ABN",
       "Phone",
@@ -230,7 +230,7 @@ export const icaConfig: FormConfig = {
   response: "ICA form submitted successfully!",
 
   logData: (data) => ({
-    name: data.Name,
+    name: data.FullName,
     business: data.BusinessName,
   }),
 };

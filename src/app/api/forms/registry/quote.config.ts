@@ -114,7 +114,7 @@ export const quoteConfig: FormConfig = {
 
   validation: {
     requiredFields: [
-      "Name",
+      "FullName",
       "Email",
       "Organisation",
       "Phone",
@@ -157,6 +157,6 @@ export const quoteConfig: FormConfig = {
 
   logData: (data) => ({
     org: data.Organisation,
-    name: data.Name,
+    name: data.FullName,
   }),
 };

@@ -99,7 +99,7 @@ export const termsConfig: FormConfig = {
 
   validation: {
     requiredFields: [
-      "Name",
+      "FullName",
       "Position",
       "Email",
       "Organisation",

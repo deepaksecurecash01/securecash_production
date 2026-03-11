@@ -384,7 +384,6 @@ export const useFormManager = <T extends FieldValues>(
     goToStep,
     goBack,
     submitButtonEnabled: multiStepLogic.submitButtonEnabled,
-    showReviewStep: multiStepLogic.showReviewStep,
     handleValidationError,
     sendProgressiveEmail: progressiveEmail.sendProgressiveEmail,
     getAccumulatedData: progressiveEmail.getAccumulatedData,

@@ -4,7 +4,7 @@ import { CommonValidations } from "./validationHelpers";
 // ─── SCHEMA ───────────────────────────────────────────────────────────────────
 
 export const TermsFormSchema = z.object({
-  Name: CommonValidations.fullName(),
+  FullName: CommonValidations.fullName(),
 
   Position: z
     .string()
@@ -49,7 +49,7 @@ export type TermsFormInput = z.input<typeof TermsFormSchema>;
 
 // Birthdate is null on load — the date picker has no initial selection.
 export const TERMS_DEFAULT_VALUES: TermsFormInput = {
-  Name: "",
+  FullName: "",
   Position: "",
   Email: "",
   Birthdate: undefined,
@@ -64,7 +64,7 @@ export const TERMS_DEFAULT_VALUES: TermsFormInput = {
 // BotField intentionally excluded — honeypot field, should never receive focus.
 
 export const TERMS_FIELD_PRIORITY: Array<keyof TermsFormData> = [
-  "Name",
+  "FullName",
   "Position",
   "Email",
   "Birthdate",

@@ -4,7 +4,7 @@ import { CommonValidations } from "./validationHelpers";
 const ServiceType = z.enum(["Banking", "Change"]);
 
  const QuoteFormSchema = z.object({
-  Name: CommonValidations.fullName(),
+  FullName: CommonValidations.fullName(),
   Organisation: z.string().min(1, "Please enter your organisation's name."),
   Phone: CommonValidations.phone(8, 15),
   Referrer: z.string().min(1, "Please enter where you heard about us."),
@@ -130,7 +130,7 @@ export const QUOTE_SCHEMAS = {
 };
 
 export const QUOTE_DEFAULT_VALUES: QuoteFormInput = {
-  Name: "",
+  FullName: "",
   Organisation: "",
   Phone: "",
   Referrer: "",
@@ -152,7 +152,7 @@ export const QUOTE_DEFAULT_VALUES: QuoteFormInput = {
 };
 
 export const QUOTE_FIELD_PRIORITY: Array<keyof QuoteFormData> = [
-  "Name",
+  "FullName",
   "Organisation",
   "Phone",
   "Referrer",

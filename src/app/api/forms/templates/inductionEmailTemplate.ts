@@ -1,7 +1,7 @@
 import { emailRow, emailWrapper } from "../utils/emailLayout";
 
 interface InductionFormData {
-  Name?: string;
+  FullName?: string;
   Phone?: string;
   Email?: string;
   Address?: string;
@@ -18,10 +18,10 @@ const inductionEmailTemplate = (
   emailWrapper(
     "Induction Completion Record",
     `
-    <h1 style="font-size:24px;font-weight:bold;">Induction - ${formData.Name ?? ""}</h1>
+    <h1 style="font-size:24px;font-weight:bold;">Induction - ${formData.FullName ?? ""}</h1>
     <p>The following particulars were submitted upon successful completion of the induction:</p>
     <table>
-      ${emailRow("Full Name", formData.Name ?? "")}
+      ${emailRow("Full Name", formData.FullName ?? "")}
       ${emailRow("Phone #", formData.Phone ?? "")}
       ${emailRow("Email", formData.Email ?? "")}
       ${emailRow("Address", formData.Address ?? "")}

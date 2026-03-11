@@ -1,7 +1,7 @@
 import { emailRow, emailSection, emailWrapper } from "../utils/emailLayout";
 
 interface QuoteFormData {
-  Name?: string;
+  FullName?: string;
   Organisation?: string;
   Phone?: string;
   Referrer?: string;
@@ -98,7 +98,7 @@ const quoteAdminRequestEmailTemplate = (formData: QuoteFormData): string => {
     <h1 style="font-size:24px;font-weight:bold;">Quotation Request</h1>
     <p>A website visitor submitted the following details for a quote:</p>
     <table>
-      ${emailRow("Name", formData.Name ?? "Not specified")}
+      ${emailRow("Name", formData.FullName ?? "Not specified")}
       ${emailRow("Organisation", formData.Organisation ?? "Not specified")}
       ${emailRow("Phone #", formData.Phone ?? "Not specified")}
       ${emailRow("Heard from us", formData.Referrer ?? "Not specified")}

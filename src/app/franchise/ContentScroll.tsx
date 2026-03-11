@@ -26,7 +26,7 @@ const ContentScroll = ({ scrollData } : { scrollData: ContentItem[] }) =>
             <h3 className="text-[18px] font-medium text-[#000] text-left mb-0 font-montserrat">
               {item.subtitle}
             </h3>
-            <div>{parseHtml(item.content)}</div>
+            <div className=" font-light">{parseHtml(item.content)}</div>
           </li>
         ))}
       </ul>

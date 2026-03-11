@@ -62,7 +62,7 @@ export const FORM_VALIDATION_RULES: Record<string, string[]> = {
     "ReferralSource",
   ],
   ica: [
-    "Name",
+    "FullName",
     "Email",
     "BusinessName",
     "OrganisationType",
@@ -77,7 +77,7 @@ export const FORM_VALIDATION_RULES: Record<string, string[]> = {
     "eDocketsContractorCode",
   ],
   quote: [
-    "Name",
+    "FullName",
     "Email",
     "Organisation",
     "Phone",
@@ -114,7 +114,7 @@ export const FORM_VALIDATION_RULES: Record<string, string[]> = {
     "Bank",
     "Amount",
   ],
-  terms: ["Name", "Position", "Email", "Organisation", "ABN", "Signature"],
+  terms: ["FullName", "Position", "Email", "Organisation", "ABN", "Signature"],
   austrac: [
     "Organisation",
     "OrganisationEmail",
@@ -125,7 +125,7 @@ export const FORM_VALIDATION_RULES: Record<string, string[]> = {
     "Personnel",
   ],
   induction: [
-    "Name",
+    "FullName",
     "Email",
     "Phone",
     "Address",

@@ -113,6 +113,7 @@ const mainPages: MainPage[] = [
   { slug: "free-change-order-service", label: "Free Change Order Service" },
   { slug: "privacy-policy", label: "Privacy Policy" },
   { slug: "induction", label: "induction" },
+  { slug: "performance", label: "performance" },
 ];
 
 const blogPosts: string[] = [

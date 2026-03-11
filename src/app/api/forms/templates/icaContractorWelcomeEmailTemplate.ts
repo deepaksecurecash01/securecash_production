@@ -55,7 +55,7 @@ const icaContractorWelcomeEmailTemplate = (formData: FormData): string =>
       <p>Please see below for a brief summary of the information you submitted.
         The agreement and the deed are attached to this email as PDF copies.</p>
       <table style="margin-left:8px;">
-        ${emailRow("Full Name", String(formData.Name ?? formData.CompanyName ?? ""))}
+        ${emailRow("Full Name", String(formData.FullName ?? formData.CompanyName ?? ""))}
         ${emailRow("Org. Structure", String(formData.OrganisationType ?? ""))}
         ${emailRow("ABN", String(formData.ABN ?? ""))}
         ${emailRow("Phone", String(formData.Phone ?? ""))}
@@ -74,8 +74,8 @@ const icaContractorWelcomeEmailTemplate = (formData: FormData): string =>
         ${emailRow("Date of Deed", String(formData.DateDeed ?? ""))}
         ${emailRow("Beneficiary", "Office Central Pty Ltd ACN 668 461 050 of 30 Church Hill Road, Old Noarlunga, SA")}
         ${emailRow("Contractor", String(formData.BusinessName ?? formData.CompanyName ?? ""))}
-        ${emailRow("Guarantor", `${String(formData.Name ?? formData.CompanyName ?? "")} of ${String(formData.AddressResidential ?? "")}`)}
-        ${emailRow("Name", String(formData.Name ?? formData.CompanyName ?? ""))}
+        ${emailRow("Guarantor", `${String(formData.NameConfirm ?? formData.CompanyName ?? "")} of ${String(formData.AddressResidential ?? "")}`)}
+        ${emailRow("Name", String(formData.FullName ?? formData.CompanyName ?? ""))}
         ${emailRow("Residential Address", String(formData.AddressResidential ?? ""))}
         ${emailRow("Witnessed by", String(formData.WitnessName ?? ""))}
         ${emailRow("Witness Address", String(formData.WitnessAddress ?? ""))}
